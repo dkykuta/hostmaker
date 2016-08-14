@@ -2,15 +2,15 @@ import gi
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk
 from scrolltext import ScrollText
-from activablelist import ActivableList, ActivableListRow, ScrollableActivableList
+from activablelist import ActivableList, ActivableListRow, ScrollableActivableList, XActivableList
 
 class MultiContentManager(Gtk.Box):
     def __init__(self, w=600, h=600):
-        Gtk.Container.__init__(self)
+        Gtk.Box.__init__(self)
         self.set_size_request(w,h)
 
         self.scrolltext = ScrollText(w=w*2/3, h=500)
-        self.scrolllist = ScrollableActivableList(w=w/3, h=500)
+        self.scrolllist = XActivableList(w=w/3, h=500)
         self.outterbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing = 5)
         self.innerupperbox = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing = 10)
         self.innerlowerbox = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing = 10)
@@ -53,3 +53,6 @@ class MultiContentManager(Gtk.Box):
 
     def apply_hosts(self, button):
         print('apply hosts')
+        for row in self.scrolllist.get_enabled_rows():
+            print(row.label_text)
+            print("  %s" % row.get_text())

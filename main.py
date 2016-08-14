@@ -28,14 +28,6 @@ class MainWindow:
         self.tt = ScrollText()
         self.box1 = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=20)
 
-        self.ll = ScrollableActivableList()
-        for i in range(30):
-            self.ll.addRow("teste %s" % i)
-
-        self.box1.pack_start(self.ll, True, True, 0)
-        self.box1.pack_start(self.tt, True, True, 0)
-    #    self.window.add(self.box1)
-
         self.xx = MultiContentManager()
         self.window.add(self.xx)
 

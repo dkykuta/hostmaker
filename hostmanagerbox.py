@@ -36,7 +36,7 @@ class MultiContentManager(Gtk.Box):
 
         self.add(self.outterbox)
 
-        for i in range(30):
+        for i in range(10):
             self.scrolllist.addRow("line %s" % i)
 
     def change_row(self, someobj, row):

@@ -1,6 +1,7 @@
 import gi
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk
+from dialog import DialogConfirmation, DialogEntry
 
 class ActivableListRow(Gtk.ListBoxRow):
     def __init__(self, label_text, row_content = None):
@@ -52,10 +53,29 @@ class XActivableList(Gtk.Box):
         self.pack_end(self.buttonbox, False, True, 0)
 
     def new_clicked(self, button):
-        print("clicked New")
+        dialog = DialogEntry(ask_text = "Nome do novo item de hosts")
+        try:
+            response = dialog.run()
+            if response == Gtk.ResponseType.OK:
+                row_name =  dialog.get_response_text()
+                self.slist.addRow(row_name)
+                self.slist.show_all()
+            elif response == Gtk.ResponseType.CANCEL:
+                print("cancel")
+        except:
+            pass
+        dialog.destroy()
 
     def del_clicked(self, button):
-        print("clicked Del")
+        dialog = DialogConfirmation()
+        response = dialog.run()
+
+        if response == Gtk.ResponseType.OK:
+            self.slist.remove_selected_row()
+        elif response == Gtk.ResponseType.CANCEL:
+            print("cancel")
+
+        dialog.destroy()
 
     def addRow(self, row_label_text):
         self.slist.addRow(row_label_text)
@@ -92,6 +112,16 @@ class ScrollableActivableList(Gtk.ScrolledWindow):
     def apply_selected_row(self, method):
         method(self.act_list.get_selected_row())
 
+    def get_selected_row(self):
+        return self.act_list.get_selected_row()
+
+    def remove_selected_row(self):
+        row = self.act_list.get_selected_row()
+        if row:
+            self.act_list.remove_row(row)
+        else:
+            print("Nothing selected")
+
     def apply_all_rows(self, method):
         for i in range(self.nrows):
             method(self.act_list.get_row_at_index(i))
@@ -108,5 +138,9 @@ class ActivableList(Gtk.ListBox):
     def __init__(self, w=300, h=350):
         Gtk.ListBox.__init__(self)
         self.set_size_request(w, h)
+
     def addRow(self, row_label_text):
         self.add(ActivableListRow(row_label_text))
+
+    def remove_row(self, row):
+        self.remove(row)

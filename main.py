@@ -8,6 +8,8 @@ from activablelist import ActivableList, ScrollableActivableList
 
 from hostmanagerbox import MultiContentManager
 
+from filemanager import FileManager
+
 class MainWindow:
 
     def delete_event(self, widget, event, data=None):
@@ -25,7 +27,7 @@ class MainWindow:
         self.window.connect("destroy", self.destroy)
         self.window.set_border_width(10)
 
-        self.manager = MultiContentManager("/tmp/hosts")
+        self.manager = MultiContentManager(parent_window=self.window)
         self.window.add(self.manager)
 
         self.window.show_all()
@@ -34,5 +36,7 @@ class MainWindow:
         Gtk.main()
 
 if __name__ == "__main__":
+    fm = FileManager()
+    fm.set_data_dir('/tmp/hosts')
     mw = MainWindow()
     mw.main()

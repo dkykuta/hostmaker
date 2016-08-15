@@ -4,6 +4,7 @@ from gi.repository import Gtk
 from dialog import DialogConfirmation, DialogEntry
 from os import listdir
 from os.path import isfile, join
+from filemanager import FileManager
 
 class ActivableListRow(Gtk.ListBoxRow):
     def __init__(self, label_text, row_content = None):
@@ -24,9 +25,13 @@ class ActivableListRow(Gtk.ListBoxRow):
         self.hbox.pack_end(self.switch, False, True, 0)
 
     def checkpoint(self):
-        self.text_buffer.set_modified(False)
         self.content_text = self.text_buffer.get_text(self.text_buffer.get_start_iter(), self.text_buffer.get_end_iter(), True) 
+        if self.content_text and self.content_text[-1] != '\n':
+            self.content_text = "%s\n" % self.content_text
+        self.text_buffer.set_text(self.content_text)
+        self.text_buffer.set_modified(False)
         self.update_label()
+        FileManager().save_file(self.label_text, self.content_text)
 
     def update_label(self, something=None):
         if self.text_buffer.get_modified():
@@ -38,9 +43,9 @@ class ActivableListRow(Gtk.ListBoxRow):
         return self.content_text
 
 class XActivableList(Gtk.Box):
-    def __init__(self, hadjustment=None, vadjustment=None, w=300, h=350, data_dir=None):
+    def __init__(self, hadjustment=None, vadjustment=None, w=300, h=350):
         Gtk.Box.__init__(self,orientation=Gtk.Orientation.VERTICAL, spacing = 5)
-        self.data_dir = data_dir
+        self.fm = FileManager()
         self.new_button = Gtk.Button.new_with_label("New")
         self.del_button = Gtk.Button.new_with_label("Delete")
         self.buttonbox = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing = 5)
@@ -62,10 +67,7 @@ class XActivableList(Gtk.Box):
             if response == Gtk.ResponseType.OK:
                 row_name =  dialog.get_response_text()
                 print(row_name)
-                if self.data_dir:
-                    fpath = join(self.data_dir, row_name)
-                    with open(fpath, "wb") as f:
-                        f.write("\n")
+                self.fm.save_file(row_name, "\n")
                 self.slist.addRow(row_name)
                 self.slist.show_all()
             elif response == Gtk.ResponseType.CANCEL:

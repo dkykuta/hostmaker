@@ -1,0 +1,30 @@
+from os import listdir
+from os.path import isfile, join
+
+
+class FileManager:
+    __shared_state = {}
+    def __init__(self):
+        self.__dict__ = self.__shared_state
+        if 'data_dir' not in self.__shared_state:
+            self.data_dir = None
+
+    def set_data_dir(self, data_dir):
+        self.data_dir = data_dir
+        print("set data_dir %s", self.data_dir)
+
+    def save_file(self, filename, content):
+        if self.data_dir:
+            fpath = join(self.data_dir, filename)
+            with open(fpath, "wb") as f:
+                f.write(content)
+
+    def load_content(self, filename):
+        if self.data_dir:
+            fpath = join(self.data_dir, filename)
+            with open(fpath, "r") as f:
+                return f.read()
+
+    def list_files(self):
+        print(self.data_dir)
+        return [f for f in listdir(self.data_dir) if isfile(join(self.data_dir, f))]

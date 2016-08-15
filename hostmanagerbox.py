@@ -4,19 +4,20 @@ from gi.repository import Gtk
 from scrolltext import ScrollText
 from activablelist import ActivableList, ActivableListRow, ScrollableActivableList, XActivableList
 
-from os import listdir
-from os.path import isfile, join
+from filemanager import FileManager
 
 class MultiContentManager(Gtk.Box):
-    def __init__(self, data_dir, w=600, h=600):
+    def __init__(self, w=600, h=600, parent_window=None):
         Gtk.Box.__init__(self)
-
-        self.data_dir = data_dir
 
         self.set_size_request(w,h)
 
+        self.fm = FileManager()
+        self.my_accelerators = Gtk.AccelGroup()
+        parent_window.add_accel_group(self.my_accelerators)
+
         self.scrolltext = ScrollText(w=w*2/3, h=500)
-        self.scrolllist = XActivableList(w=w/3, h=500, data_dir=self.data_dir)
+        self.scrolllist = XActivableList(w=w/3, h=500)
         self.outterbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing = 5)
         self.innerupperbox = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing = 10)
         self.innerlowerbox = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing = 10)
@@ -42,15 +43,13 @@ class MultiContentManager(Gtk.Box):
 
         self.add(self.outterbox)
 
-        for i in range(3):
-            self.scrolllist.addRow("line %s" % i)
-        
-        hosts_files = [f for f in listdir(self.data_dir) if isfile(join(self.data_dir, f))]
+        hosts_files = self.fm.list_files() 
         for f in hosts_files:
-            content = ''
-            with open(join(self.data_dir, f), 'r') as fi:
-                content = fi.read()
+            content = self.fm.load_content(f) or ''
             self.scrolllist.addRow(f, content)
+
+        self.add_accelerator(self.button_save, "<Control>s", signal="clicked")
+        self.add_accelerator(self.button_save_all, "<Control><Shift>s", signal="clicked")
 
     def change_row(self, someobj, row):
         if row:
@@ -69,3 +68,10 @@ class MultiContentManager(Gtk.Box):
         for row in self.scrolllist.get_enabled_rows():
             print(row.label_text)
             print("  %s" % row.get_text())
+
+    def add_accelerator(self, widget, accelerator, signal):
+        """Adds a keyboard shortcut"""
+        if accelerator is not None:
+            key, mod = Gtk.accelerator_parse(accelerator)
+            widget.add_accelerator(signal, self.my_accelerators, key, mod, Gtk.AccelFlags.VISIBLE)
+            print "The accelerator is well added with the signal " + signal

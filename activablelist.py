@@ -2,6 +2,8 @@ import gi
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk
 from dialog import DialogConfirmation, DialogEntry
+from os import listdir
+from os.path import isfile, join
 
 class ActivableListRow(Gtk.ListBoxRow):
     def __init__(self, label_text, row_content = None):
@@ -36,8 +38,9 @@ class ActivableListRow(Gtk.ListBoxRow):
         return self.content_text
 
 class XActivableList(Gtk.Box):
-    def __init__(self, hadjustment=None, vadjustment=None, w=300, h=350):
+    def __init__(self, hadjustment=None, vadjustment=None, w=300, h=350, data_dir=None):
         Gtk.Box.__init__(self,orientation=Gtk.Orientation.VERTICAL, spacing = 5)
+        self.data_dir = data_dir
         self.new_button = Gtk.Button.new_with_label("New")
         self.del_button = Gtk.Button.new_with_label("Delete")
         self.buttonbox = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing = 5)
@@ -58,6 +61,11 @@ class XActivableList(Gtk.Box):
             response = dialog.run()
             if response == Gtk.ResponseType.OK:
                 row_name =  dialog.get_response_text()
+                print(row_name)
+                if self.data_dir:
+                    fpath = join(self.data_dir, row_name)
+                    with open(fpath, "wb") as f:
+                        f.write("\n")
                 self.slist.addRow(row_name)
                 self.slist.show_all()
             elif response == Gtk.ResponseType.CANCEL:
@@ -77,8 +85,8 @@ class XActivableList(Gtk.Box):
 
         dialog.destroy()
 
-    def addRow(self, row_label_text):
-        self.slist.addRow(row_label_text)
+    def addRow(self, row_label_text, row_content=None):
+        self.slist.addRow(row_label_text, row_content)
 
     def connect_row_selected(self, method):
         self.slist.connect_row_selected(method)
@@ -102,8 +110,8 @@ class ScrollableActivableList(Gtk.ScrolledWindow):
         self.add(self.act_list)
         self.nrows = 0
 
-    def addRow(self, row_label_text):
-        self.act_list.addRow(row_label_text)
+    def addRow(self, row_label_text, row_content=None):
+        self.act_list.addRow(row_label_text, row_content)
         self.nrows += 1
 
     def connect_row_selected(self, method):
@@ -119,6 +127,7 @@ class ScrollableActivableList(Gtk.ScrolledWindow):
         row = self.act_list.get_selected_row()
         if row:
             self.act_list.remove_row(row)
+            self.nrows -= 1
         else:
             print("Nothing selected")
 
@@ -139,8 +148,8 @@ class ActivableList(Gtk.ListBox):
         Gtk.ListBox.__init__(self)
         self.set_size_request(w, h)
 
-    def addRow(self, row_label_text):
-        self.add(ActivableListRow(row_label_text))
+    def addRow(self, row_label_text, row_content = None):
+        self.add(ActivableListRow(row_label_text, row_content))
 
     def remove_row(self, row):
         self.remove(row)

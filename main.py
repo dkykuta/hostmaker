@@ -25,11 +25,8 @@ class MainWindow:
         self.window.connect("destroy", self.destroy)
         self.window.set_border_width(10)
 
-        self.tt = ScrollText()
-        self.box1 = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=20)
-
-        self.xx = MultiContentManager()
-        self.window.add(self.xx)
+        self.manager = MultiContentManager("/tmp/hosts")
+        self.window.add(self.manager)
 
         self.window.show_all()
 

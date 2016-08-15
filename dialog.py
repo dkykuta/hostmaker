@@ -17,8 +17,6 @@ class DialogConfirmation(Gtk.Dialog):
         self.box.add(self.label)
         self.show_all()
 
-
-
 class DialogEntry(Gtk.MessageDialog):
     def __init__(self, ask_text=None):
         Gtk.Dialog.__init__(self, "Enter info", None, 0,

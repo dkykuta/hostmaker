@@ -11,7 +11,10 @@ class ScrollText(Gtk.ScrolledWindow):
         self.add(self.textview)
         if textbuffer:
             self.textview.set_buffer(text_buffer)
-        self.textview.get_buffer().insert_at_cursor(' License, info & help \n')
+        else:
+            self.textview.set_editable(False)
+        self.textview.get_buffer().insert_at_cursor(' Select file to edit')
 
     def set_buffer(self, text_buffer):
+        self.textview.set_editable(True)
         self.textview.set_buffer(text_buffer)

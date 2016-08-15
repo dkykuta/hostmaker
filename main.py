@@ -38,5 +38,6 @@ class MainWindow:
 if __name__ == "__main__":
     fm = FileManager()
     fm.set_data_dir('/tmp/hosts')
+    fm.set_actives_file('/tmp/actives_hosts')
     mw = MainWindow()
     mw.main()

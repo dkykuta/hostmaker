@@ -6,6 +6,29 @@ from os import listdir
 from os.path import isfile, join
 from filemanager import FileManager
 
+class ActiveManager:
+    __shared_state = {}
+    def __init__(self):
+        self.__dict__ = self.__shared_state
+        if 'switches' not in self.__shared_state:
+            self.switches = {}
+
+    def put(self, key, value):
+        self.switches[key] = value
+
+    def activate(self, key):
+        return self.set_state(key, True)
+
+    def deactivate(self, key):
+        return self.set_state(key, False)
+
+    def set_state(self, key, value):
+        if key in self.switches:
+            sw = self.switches[key]
+            sw.set_active(value)
+            return True
+        return False
+
 class ActivableListRow(Gtk.ListBoxRow):
     def __init__(self, label_text, row_content = None):
         Gtk.ListBoxRow.__init__(self)
@@ -21,6 +44,7 @@ class ActivableListRow(Gtk.ListBoxRow):
         self.text_buffer.connect('changed', self.update_label)
 
         self.switch = Gtk.Switch()
+        ActiveManager().put(label_text, self.switch)
         self.switch.props.valign = Gtk.Align.CENTER
         self.hbox.pack_end(self.switch, False, True, 0)
 

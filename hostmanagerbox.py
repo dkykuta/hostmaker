@@ -2,7 +2,8 @@ import gi
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk
 from scrolltext import ScrollText
-from activablelist import ActivableList, ActivableListRow, ScrollableActivableList, XActivableList
+from dialog import DialogConfirmation
+from activablelist import ActivableList, ActivableListRow, ScrollableActivableList, XActivableList, ActiveManager
 
 from filemanager import FileManager
 
@@ -48,6 +49,14 @@ class MultiContentManager(Gtk.Box):
             content = self.fm.load_content(f) or ''
             self.scrolllist.addRow(f, content)
 
+        for act in FileManager().get_actives():
+            ActiveManager().activate(act)
+
+        enabled_hosts = ""
+        for row in self.scrolllist.get_enabled_rows():
+            enabled_hosts = "%s%s\n" % (enabled_hosts, row.label_text)
+        FileManager().set_actives(enabled_hosts)
+
         self.add_accelerator(self.button_save, "<Control>s", signal="clicked")
         self.add_accelerator(self.button_save_all, "<Control><Shift>s", signal="clicked")
 
@@ -65,9 +74,32 @@ class MultiContentManager(Gtk.Box):
 
     def apply_hosts(self, button):
         print('apply hosts')
+        msg = "Deseja aplicar o host montado por:\n"
+        enabled_hosts = ""
         for row in self.scrolllist.get_enabled_rows():
-            print(row.label_text)
-            print("  %s" % row.get_text())
+            enabled_hosts = "%s%s\n" % (enabled_hosts, row.label_text)
+            msg = "%s - %s\n" % (msg, row.label_text)
+        FileManager().set_actives(enabled_hosts)
+
+        dialog = DialogConfirmation(msg)
+        response = dialog.run()
+
+        try:
+            if response == Gtk.ResponseType.OK:
+                hosts_content = "#################\n##  AUTOHOSTS  ##\n#################\n\n"
+                for row in self.scrolllist.get_enabled_rows():
+                    hosts_content = "%s# from %s\n%s\n\n" % (hosts_content, row.label_text, row.get_text().strip())
+                hosts_content = hosts_content.strip()
+                FileManager().save_etc_hosts(hosts_content)
+            elif response == Gtk.ResponseType.CANCEL:
+                print("cancel")
+            dialog.destroy()
+        except:
+            dialog.destroy()
+            errord = DialogConfirmation("An error occurred")
+            response = errord.run()
+            errord.destroy()
+
 
     def add_accelerator(self, widget, accelerator, signal):
         """Adds a keyboard shortcut"""

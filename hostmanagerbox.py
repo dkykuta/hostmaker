@@ -74,6 +74,7 @@ class MultiContentManager(Gtk.Box):
 
     def apply_hosts(self, button):
         print('apply hosts')
+        self.save_all(button)
         msg = "Deseja aplicar o host montado por:\n"
         enabled_hosts = ""
         for row in self.scrolllist.get_enabled_rows():

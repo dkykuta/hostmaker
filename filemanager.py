@@ -1,5 +1,5 @@
-from os import listdir
-from os.path import isfile, join
+from os import listdir, remove
+from os.path import isfile, join, exists
 
 class FileManager:
     __shared_state = {}
@@ -10,7 +10,7 @@ class FileManager:
         if 'actives_file' not in self.__shared_state:
             self.actives_file = None
         if 'etchosts_file' not in self.__shared_state:
-            self.etchosts_file = '/etc/hosts2'
+            self.etchosts_file = '/etc/hosts'
 
     def set_data_dir(self, data_dir):
         self.data_dir = data_dir
@@ -23,6 +23,14 @@ class FileManager:
             fpath = join(self.data_dir, filename)
             with open(fpath, "wb") as f:
                 f.write(content)
+
+    def delete_file(self, filename):
+        if self.data_dir:
+            fpath = join(self.data_dir, filename)
+            if exists(fpath):
+                remove(fpath)
+            else:
+                print("Nao existe")
 
     def load_content(self, filename):
         if self.data_dir:

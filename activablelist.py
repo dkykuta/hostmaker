@@ -152,6 +152,7 @@ class ScrollableActivableList(Gtk.ScrolledWindow):
     def remove_selected_row(self):
         row = self.act_list.get_selected_row()
         if row:
+            FileManager().delete_file(row.label_text)
             self.act_list.remove_row(row)
             self.nrows -= 1
         else:

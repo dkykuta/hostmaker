@@ -5,8 +5,10 @@ gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk
 from scrolltext import ScrollText
 from activablelist import ActivableList, ScrollableActivableList
+import os
 
 from hostmanagerbox import MultiContentManager
+from dialog import DialogConfirmation
 
 from filemanager import FileManager
 
@@ -36,8 +38,19 @@ class MainWindow:
         Gtk.main()
 
 if __name__ == "__main__":
+    if os.geteuid() != 0:
+        dialog = DialogConfirmation("Run as root")
+        dialog.run()
+        exit("You need to be root")
+    maindir = '/var/lib/hostmaker'
+    data_dir = "%s/data" % (maindir)
+    act_file = "%s/active_hosts" % (maindir)
     fm = FileManager()
-    fm.set_data_dir('/tmp/hosts')
-    fm.set_actives_file('/tmp/actives_hosts')
+    if not os.path.exists(data_dir):
+        os.makedirs(data_dir)
+    if not os.path.exists(act_file):
+        open(act_file, 'a').close()
+    fm.set_data_dir(data_dir)
+    fm.set_actives_file(act_file)
     mw = MainWindow()
     mw.main()

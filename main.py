@@ -24,6 +24,7 @@ class MainWindow:
 
     def __init__(self):
         self.window = Gtk.Window()
+        self.window.set_title("HostMAKER")
     
         self.window.connect("delete_event", self.delete_event)
         self.window.connect("destroy", self.destroy)

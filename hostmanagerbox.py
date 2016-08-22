@@ -33,7 +33,7 @@ class MultiContentManager(Gtk.Box):
         self.scrolllist.connect_row_selected(self.change_row)
     
         self.innerupperbox.pack_start(self.scrolllist, False, True, 5)
-        self.innerupperbox.pack_start(self.scrolltext, False, True, 5)
+        self.innerupperbox.pack_start(self.scrolltext, True, True, 5)
 
         self.innerlowerbox.pack_start(self.button_save, False, True, 15)
         self.innerlowerbox.pack_start(self.button_save_all, False, True, 15)

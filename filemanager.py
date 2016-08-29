@@ -40,7 +40,7 @@ class FileManager:
 
     def list_files(self):
         print(self.data_dir)
-        return [f for f in listdir(self.data_dir) if isfile(join(self.data_dir, f))]
+        return sorted([f for f in listdir(self.data_dir) if isfile(join(self.data_dir, f))])
 
     def get_actives(self):
         if self.actives_file:

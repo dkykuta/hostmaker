@@ -30,7 +30,7 @@ class MainWindow:
         self.window.connect("destroy", self.destroy)
         self.window.set_border_width(10)
 
-        self.manager = MultiContentManager(parent_window=self.window)
+        self.manager = MultiContentManager(parent_window=self.window, w=800)
         self.window.add(self.manager)
 
         self.window.show_all()

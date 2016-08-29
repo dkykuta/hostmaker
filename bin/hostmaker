@@ -1,1 +1,3 @@
+#! /bin/bash
+
 sudo /home/dkykuta/sandbox/hostmaker/main.py

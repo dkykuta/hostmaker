@@ -1,6 +1,6 @@
 import gi
 gi.require_version('Gtk', '3.0')
-from gi.repository import Gtk
+from gi.repository import Gtk, GtkSource
 from dialog import DialogConfirmation, DialogEntry
 from os import listdir
 from os.path import isfile, join
@@ -38,7 +38,7 @@ class ActivableListRow(Gtk.ListBoxRow):
         self.add(self.hbox)
         self.hbox.pack_start(self.label, False, True, 0)
 
-        self.text_buffer = Gtk.TextBuffer()
+        self.text_buffer = GtkSource.Buffer()
         self.text_buffer.set_text(row_content or '')
         self.checkpoint()
         self.text_buffer.connect('changed', self.update_label)

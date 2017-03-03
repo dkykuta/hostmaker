@@ -1,12 +1,13 @@
 import gi
 gi.require_version('Gtk', '3.0')
-from gi.repository import Gtk
+from gi.repository import Gtk, Gdk
 
 class ScrollText(Gtk.ScrolledWindow):
     def __init__(self, hadjustment=None, vadjustment=None, textbuffer=None, w=300, h=550):
         Gtk.ScrolledWindow.__init__(self, hadjustment, vadjustment)
         self.textview = Gtk.TextView()
         self.textview.set_size_request(w,h)
+        self.textview.modify_fg(Gtk.StateFlags.NORMAL, Gdk.color_parse("green"))
         self.set_size_request(w,h)
         self.add(self.textview)
         if textbuffer:

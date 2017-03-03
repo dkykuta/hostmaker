@@ -7,7 +7,6 @@ class ScrollText(Gtk.ScrolledWindow):
         Gtk.ScrolledWindow.__init__(self, hadjustment, vadjustment)
         self.textview = Gtk.TextView()
         self.textview.set_size_request(w,h)
-        self.textview.modify_fg(Gtk.StateFlags.NORMAL, Gdk.color_parse("green"))
         self.set_size_request(w,h)
         self.add(self.textview)
         if textbuffer:
@@ -16,6 +15,7 @@ class ScrollText(Gtk.ScrolledWindow):
             self.textview.set_editable(False)
         self.textview.get_buffer().insert_at_cursor(' Select file to edit')
 
-    def set_buffer(self, text_buffer):
+    def set_buffer(self, text_buffer, color="green"):
         self.textview.set_editable(True)
         self.textview.set_buffer(text_buffer)
+        self.textview.modify_fg(Gtk.StateFlags.NORMAL, Gdk.color_parse(color))

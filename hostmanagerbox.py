@@ -61,8 +61,15 @@ class MultiContentManager(Gtk.Box):
         self.add_accelerator(self.button_save_all, "<Control><Shift>s", signal="clicked")
 
     def change_row(self, someobj, row):
+        color="purple"
+        if row in self.scrolllist.get_enabled_rows():
+            print "OON"
+            color="green"
+        else:
+            print "OOFF"
+            color="red"
         if row:
-            self.scrolltext.set_buffer(row.text_buffer)
+            self.scrolltext.set_buffer(row.text_buffer, color)
 
     def save(self, button):
         self.scrolllist.apply_selected_row(ActivableListRow.checkpoint)
